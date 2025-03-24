@@ -5,6 +5,7 @@
  */ 
 #include "heaptimer.h"
 
+//i向上
 void HeapTimer::siftup_(size_t i) {
     assert(i >= 0 && i < heap_.size());
     size_t j = (i - 1) / 2;
@@ -23,19 +24,21 @@ void HeapTimer::SwapNode_(size_t i, size_t j) {
     ref_[heap_[i].id] = i;
     ref_[heap_[j].id] = j;
 } 
-
+//i向下
 bool HeapTimer::siftdown_(size_t index, size_t n) {
     assert(index >= 0 && index < heap_.size());
     assert(n >= 0 && n <= heap_.size());
     size_t i = index;
     size_t j = i * 2 + 1;
     while(j < n) {
+        // 找到两个子节点中较小的
         if(j + 1 < n && heap_[j + 1] < heap_[j]) j++;
         if(heap_[i] < heap_[j]) break;
         SwapNode_(i, j);
         i = j;
         j = i * 2 + 1;
     }
+    // 是否进行了向下操作？
     return i > index;
 }
 

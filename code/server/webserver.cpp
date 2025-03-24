@@ -50,7 +50,7 @@ WebServer::~WebServer() {
 }
 
 void WebServer::InitEventMode_(int trigMode) {
-    listenEvent_ = EPOLLRDHUP;
+    listenEvent_ = EPOLLRDHUP; //读关闭
     connEvent_ = EPOLLONESHOT | EPOLLRDHUP;
     switch (trigMode)
     {
