@@ -37,6 +37,7 @@ bool Epoller::DelFd(int fd) {
 }
 
 int Epoller::Wait(int timeoutMs) {
+    // 等待EpollFd的IO事件
     return epoll_wait(epollFd_, &events_[0], static_cast<int>(events_.size()), timeoutMs);
 }
 

@@ -81,6 +81,7 @@ void WebServer::Start() {
         if(timeoutMS_ > 0) {
             timeMS = timer_->GetNextTick();
         }
+        // 有多少个被触发
         int eventCnt = epoller_->Wait(timeMS);
         for(int i = 0; i < eventCnt; i++) {
             /* 处理事件 */
@@ -179,6 +180,7 @@ void WebServer::OnRead_(HttpConn* client) {
 }
 
 void WebServer::OnProcess(HttpConn* client) {
+    // 接收到
     if(client->process()) {
         epoller_->ModFd(client->GetFd(), connEvent_ | EPOLLOUT);
     } else {
@@ -231,7 +233,7 @@ bool WebServer::InitSocket_() {
         LOG_ERROR("Create socket error!", port_);
         return false;
     }
-
+    // 套接字层、设置linger，关闭连接后对未发送完的数据的行为
     ret = setsockopt(listenFd_, SOL_SOCKET, SO_LINGER, &optLinger, sizeof(optLinger));
     if(ret < 0) {
         close(listenFd_);
@@ -242,6 +244,7 @@ bool WebServer::InitSocket_() {
     int optval = 1;
     /* 端口复用 */
     /* 只有最后一个套接字会正常接收数据。 */
+    // 允许重新使用处于 TIME_WAIT 状态的本地地址，适用于快速重启服务。
     ret = setsockopt(listenFd_, SOL_SOCKET, SO_REUSEADDR, (const void*)&optval, sizeof(int));
     if(ret == -1) {
         LOG_ERROR("set socket setsockopt error !");
@@ -268,6 +271,7 @@ bool WebServer::InitSocket_() {
         close(listenFd_);
         return false;
     }
+    // 设置非阻塞模式
     SetFdNonblock(listenFd_);
     LOG_INFO("Server port:%d", port_);
     return true;

@@ -106,10 +106,13 @@ void HeapTimer::tick() {
     }
     while(!heap_.empty()) {
         TimerNode node = heap_.front();
+        // 最小事件未结束，直接退出
         if(std::chrono::duration_cast<MS>(node.expires - Clock::now()).count() > 0) { 
             break; 
         }
+        // 当前节点超时，回调函数
         node.cb();
+        //去除根节点
         pop();
     }
 }
@@ -125,9 +128,11 @@ void HeapTimer::clear() {
 }
 
 int HeapTimer::GetNextTick() {
+    // 清除超时节点
     tick();
     size_t res = -1;
     if(!heap_.empty()) {
+        // 剩余时间
         res = std::chrono::duration_cast<MS>(heap_.front().expires - Clock::now()).count();
         if(res < 0) { res = 0; }
     }

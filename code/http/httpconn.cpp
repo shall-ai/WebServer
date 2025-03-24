@@ -77,6 +77,7 @@ ssize_t HttpConn::write(int* saveErrno) {
             break;
         }
         if(iov_[0].iov_len + iov_[1].iov_len  == 0) { break; } /* 传输结束 */
+        // 如果iov[0]全部被write，将iov置零，将iov[1]后移至未write的地址
         else if(static_cast<size_t>(len) > iov_[0].iov_len) {
             iov_[1].iov_base = (uint8_t*) iov_[1].iov_base + (len - iov_[0].iov_len);
             iov_[1].iov_len -= (len - iov_[0].iov_len);
@@ -85,6 +86,7 @@ ssize_t HttpConn::write(int* saveErrno) {
                 iov_[0].iov_len = 0;
             }
         }
+        // 如果iov[0]未被全部write，将iov[0]后移，已经写入的部分置零
         else {
             iov_[0].iov_base = (uint8_t*)iov_[0].iov_base + len; 
             iov_[0].iov_len -= len; 

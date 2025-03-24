@@ -94,6 +94,8 @@ ssize_t Buffer::ReadFd(int fd, int* saveErrno) {
     iov[1].iov_len = sizeof(buff);
 
     const ssize_t len = readv(fd, iov, 2);
+    // 如果读取的字节数小于this->buffer_的剩余量，调整writePos_
+    // 如果读取的字节数大于this->buffer——剩余量，Append
     if(len < 0) {
         *saveErrno = errno;
     }
